@@ -1,0 +1,74 @@
+### Получить всех сотрудников
+GET http://localhost:8080/employees
+
+### Создать сотрудника 1
+POST http://localhost:8080/employees
+Content-Type: application/json
+
+{
+  "firstName": "Егор",
+  "lastName": "Пешков",
+  "department": 1,
+  "salary": 100000
+}
+
+### Создать сотрудника 2
+POST http://localhost:8080/employees
+Content-Type: application/json
+
+{
+  "firstName": "Марина",
+  "lastName": "Круглова",
+  "department": 2,
+  "salary": 120000
+}
+
+### Создать сотрудника 3
+POST http://localhost:8080/employees
+Content-Type: application/json
+
+{
+  "firstName": "Андрей",
+  "lastName": "Веселов",
+  "department": 1,
+  "salary": 150000
+}
+
+### Создать сотрудника 4
+POST http://localhost:8080/employees
+Content-Type: application/json
+
+{
+  "firstName": "Илья",
+  "lastName": "Романов",
+  "department": 3,
+  "salary": 160000
+}
+
+### Получить сумму з/п сотрудников
+GET http://localhost:8080/employees/salary/sum
+
+### Получить сотрудника с минимальной з/п
+GET http://localhost:8080/employees/salary/min
+
+### Получить сотрудника с максимальной з/п
+GET http://localhost:8080/employees/salary/max
+
+### Получить сотрудников с з/п больше средней
+GET http://localhost:8080/employees/salary/average
+
+### Получить список сотрудников по департаменту
+GET http://localhost:8080/department/{id}/employees
+
+### Получить сумму з/п по департаменту
+GET http://localhost:8080/department/{id}/salary/sum
+
+### Получить минимальную з/п по департаменту
+GET http://localhost:8080/department/{id}/salary/min
+
+### Получить максимальную з/п по департаменту
+GET http://localhost:8080/department/{id}/salary/max
+
+### Получить всех сотрудников, сгрупированных по департаментам
+GET http://localhost:8080/department/employees
+
