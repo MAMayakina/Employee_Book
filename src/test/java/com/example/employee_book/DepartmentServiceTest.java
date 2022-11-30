@@ -1,6 +1,7 @@
 package com.example.employee_book;
 
 import com.example.employee_book.model.Employee;
+import com.example.employee_book.record.EmployeeRequest;
 import com.example.employee_book.service.DepartmentService;
 import com.example.employee_book.service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +46,7 @@ public class DepartmentServiceTest {
     @Test
     public void checkEmployeesFromDepartment() {
         final int departmentId = 1;
-        final List<Employee> actual = actualEmployeeList.stream()
+        final List<Employee> actual = employeeService.getEmployees().stream()
                 .filter(employee -> employee.getDepartment() == departmentId)
                 .collect(Collectors.toList());
         final List<Employee> expected = departmentService.getEmployeesFromDepartment(departmentId);
@@ -56,7 +57,7 @@ public class DepartmentServiceTest {
     public void checkSumSalaryOfDepartment() {
         final int departmentId = 1;
         int actual = 0;
-        for (Employee employee : actualEmployeeList) {
+        for (Employee employee : employeeService.getEmployees()) {
             if (employee.getDepartment() == departmentId) {
                 actual = actual + employee.getSalary();
             }
@@ -69,7 +70,7 @@ public class DepartmentServiceTest {
     public void checkMaxSalaryOfDepartment() {
         final int departmentId = 1;
         int actual = 0;
-        for (Employee employee : actualEmployeeList) {
+        for (Employee employee : employeeService.getEmployees()) {
             if (employee.getDepartment() == departmentId && employee.getSalary() > actual) {
                 actual = employee.getSalary();
             }
@@ -81,20 +82,20 @@ public class DepartmentServiceTest {
     @Test
     public void checkMinSalaryOfDepartment() {
         final int departmentId = 1;
-        int actual = 0;
-        for (Employee employee : actualEmployeeList) {
+        int actual = Integer.MAX_VALUE;
+        for (Employee employee : employeeService.getEmployees()) {
             if (employee.getDepartment() == departmentId && employee.getSalary() < actual) {
                 actual = employee.getSalary();
             }
         }
-        final int expected = departmentService.getMaxSalaryOfDepartment(departmentId);
+        final int expected = departmentService.getMinSalaryOfDepartment(departmentId);
         assertEquals(expected, actual);
     }
 
     @Test
     public void checkEmployeesByDepartment() {
         final Map<Integer, List<Employee>> actual = new HashMap<>();
-        for (Employee employee : actualEmployeeList) {
+        for (Employee employee : employeeService.getEmployees()) {
             if (!actual.containsKey(employee.getDepartment())) {
                 actual.put(employee.getDepartment(), new ArrayList<>(List.of(employee)));
             } else{

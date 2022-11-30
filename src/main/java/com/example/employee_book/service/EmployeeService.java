@@ -8,7 +8,7 @@ import java.util.*;
 
 @Service
 public class EmployeeService {
-    private Map<Integer, Employee> employees = new HashMap<>();
+    private final Map<Integer, Employee> employees = new HashMap<>();
 
     public Collection<Employee> getEmployees() {
         return employees.values();

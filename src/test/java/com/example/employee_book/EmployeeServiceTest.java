@@ -6,22 +6,19 @@ import com.example.employee_book.service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 public class EmployeeServiceTest {
 
     private EmployeeService employeeService;
-
     private List<Employee> actualEmployeeList;
 
     @BeforeEach
     public void setup() {
+        employeeService = new EmployeeService();
+
         Employee employee1 = new Employee("Егор", "Пешков", 1, 100000);
         Employee employee2 = new Employee("Марина", "Круглова", 2, 120000);
         Employee employee3 = new Employee("Андрей", "Веселов", 1, 150000);
@@ -29,14 +26,12 @@ public class EmployeeServiceTest {
         actualEmployeeList.add(employee1);
         actualEmployeeList.add(employee2);
         actualEmployeeList.add(employee3);
-
-        when(employeeService.getEmployees()).thenReturn(actualEmployeeList);
     }
 
     @Test
     public void getEmployeesTest() {
-        final List<Employee> actual = actualEmployeeList;
-        final List<Employee> expected = employeeService.getEmployees().stream().toList();
+        final Collection<Employee> actual = actualEmployeeList;
+        final Collection<Employee> expected = employeeService.getEmployees();
         assertEquals(expected, actual);
     }
 
@@ -52,13 +47,14 @@ public class EmployeeServiceTest {
 
         final Employee actual = newEmployee;
         final Employee expected = employeeService.addEmployee(newEmployeeRequest);
+
         assertEquals(expected, actual);
     }
 
     @Test
     public void checkSumSalary() {
-        final int actual = actualEmployeeList.stream().mapToInt(Employee::getSalary).sum();
-        final int expected = employeeService.getSumSalary();
+        int actual = actualEmployeeList.stream().mapToInt(Employee::getSalary).sum();
+        int expected = employeeService.getSumSalary();
         assertEquals(expected, actual);
     }
 
