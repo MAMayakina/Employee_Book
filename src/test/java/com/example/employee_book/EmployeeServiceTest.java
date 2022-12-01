@@ -5,10 +5,13 @@ import com.example.employee_book.record.EmployeeRequest;
 import com.example.employee_book.service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EmployeeServiceTest {
 
@@ -17,7 +20,10 @@ public class EmployeeServiceTest {
 
     @BeforeEach
     public void setup() {
-        employeeService = new EmployeeService();
+       employeeService = new EmployeeService();
+
+        EmployeeRequest employeeRequest = new EmployeeRequest();
+        employeeService.addEmployee(employeeRequest);
 
         Employee employee1 = new Employee("Егор", "Пешков", 1, 100000);
         Employee employee2 = new Employee("Марина", "Круглова", 2, 120000);
@@ -32,7 +38,22 @@ public class EmployeeServiceTest {
     public void getEmployeesTest() {
         final Collection<Employee> actual = actualEmployeeList;
         final Collection<Employee> expected = employeeService.getEmployees();
-        assertEquals(expected, actual);
+
+        int check = 0;
+
+        if(actual.size()==expected.size()){
+            for (Employee employeeExp : expected) {
+                for (Employee employeeAct : actual) {
+                    if(employeeExp.getFirstName().equals(employeeAct.getFirstName())&&
+                            employeeExp.getLastName().equals(employeeAct.getLastName())&&
+                            employeeExp.getDepartment()==employeeAct.getDepartment()&&
+                            employeeExp.getSalary()==employeeAct.getSalary()){
+                        check++;
+                    }
+                }
+            }
+        }
+        assertEquals(expected.size(), check);
     }
 
     @Test
@@ -47,8 +68,16 @@ public class EmployeeServiceTest {
 
         final Employee actual = newEmployee;
         final Employee expected = employeeService.addEmployee(newEmployeeRequest);
+        boolean check = false;
 
-        assertEquals(expected, actual);
+        if(expected.getFirstName().equals(actual.getFirstName())&&
+                expected.getLastName().equals(actual.getLastName())&&
+                expected.getDepartment()==actual.getDepartment()&&
+                expected.getSalary()==actual.getSalary()){
+            check=true;
+        }
+
+        assertTrue(check);
     }
 
     @Test
