@@ -31,10 +31,16 @@ public class EmployeeService {
     }
 
     public Employee getEmployeeWithMinSalary() {
-        int idEmployeeWithMinSalary = 0;
-
+        int minSalary = Integer.MAX_VALUE;
         for (Employee employee : employees.values()) {
-            if (employee.getSalary() < employees.get(idEmployeeWithMinSalary).getSalary()) {
+            if (employee.getSalary() < minSalary) {
+                minSalary = employee.getSalary();
+            }
+        }
+
+        int idEmployeeWithMinSalary = 0;
+        for (Employee employee : employees.values()) {
+            if (employee.getSalary() == minSalary) {
                 idEmployeeWithMinSalary = employee.getId();
             }
         }
@@ -43,10 +49,16 @@ public class EmployeeService {
     }
 
     public Employee getEmployeeWithMaxSalary() {
-        int idEmployeeWithMaxSalary = 0;
-
+        int maxSalary = 0;
         for (Employee employee : employees.values()) {
-            if (employee.getSalary() > employees.get(idEmployeeWithMaxSalary).getSalary()) {
+            if (employee.getSalary() > maxSalary) {
+                maxSalary = employee.getSalary();
+            }
+        }
+
+        int idEmployeeWithMaxSalary = 0;
+        for (Employee employee : employees.values()) {
+            if (employee.getSalary() == maxSalary) {
                 idEmployeeWithMaxSalary = employee.getId();
             }
         }

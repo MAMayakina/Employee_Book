@@ -5,55 +5,59 @@ import com.example.employee_book.record.EmployeeRequest;
 import com.example.employee_book.service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EmployeeServiceTest {
 
     private EmployeeService employeeService;
-    private List<Employee> actualEmployeeList;
+    private List<EmployeeRequest> requests;
 
     @BeforeEach
     public void setup() {
-       employeeService = new EmployeeService();
+        employeeService = new EmployeeService();
+        this.requests = new ArrayList<>();
 
+        EmployeeRequest employee1 = createEmployeeRequest("Егор", "Пешков", 1, 100000);
+        EmployeeRequest employee2 = createEmployeeRequest("Марина", "Круглова", 2, 120000);
+        EmployeeRequest employee3 = createEmployeeRequest("Андрей", "Веселов", 1, 150000);
+
+        employeeService.addEmployee(employee1);
+        employeeService.addEmployee(employee2);
+        employeeService.addEmployee(employee3);
+
+        requests.add(employee1);
+        requests.add(employee2);
+        requests.add(employee3);
+    }
+
+    private EmployeeRequest createEmployeeRequest(String firstName, String lastName, int department, int salary) {
         EmployeeRequest employeeRequest = new EmployeeRequest();
-        employeeService.addEmployee(employeeRequest);
-
-        Employee employee1 = new Employee("Егор", "Пешков", 1, 100000);
-        Employee employee2 = new Employee("Марина", "Круглова", 2, 120000);
-        Employee employee3 = new Employee("Андрей", "Веселов", 1, 150000);
-        actualEmployeeList = new ArrayList<>();
-        actualEmployeeList.add(employee1);
-        actualEmployeeList.add(employee2);
-        actualEmployeeList.add(employee3);
+        employeeRequest.setFirstName(firstName);
+        employeeRequest.setLastName(lastName);
+        employeeRequest.setDepartment(department);
+        employeeRequest.setSalary(salary);
+        return employeeRequest;
     }
 
     @Test
     public void getEmployeesTest() {
-        final Collection<Employee> actual = actualEmployeeList;
-        final Collection<Employee> expected = employeeService.getEmployees();
+        final Collection<Employee> actual = employeeService.getEmployees();
+        assertEquals(3, actual.size());
 
-        int check = 0;
-
-        if(actual.size()==expected.size()){
-            for (Employee employeeExp : expected) {
-                for (Employee employeeAct : actual) {
-                    if(employeeExp.getFirstName().equals(employeeAct.getFirstName())&&
-                            employeeExp.getLastName().equals(employeeAct.getLastName())&&
-                            employeeExp.getDepartment()==employeeAct.getDepartment()&&
-                            employeeExp.getSalary()==employeeAct.getSalary()){
-                        check++;
-                    }
+        for (Employee employee : actual) {
+            for (EmployeeRequest request : requests) {
+                if (request.getFirstName().equals(employee.getFirstName()) && request.getLastName().equals(employee.getLastName())) {
+                    assertEquals(request.getFirstName(), employee.getFirstName());
+                    assertEquals(request.getLastName(), employee.getLastName());
+                    assertEquals(request.getDepartment(), employee.getDepartment());
+                    assertEquals(request.getSalary(), employee.getSalary());
                 }
             }
         }
-        assertEquals(expected.size(), check);
+
     }
 
     @Test
@@ -66,70 +70,91 @@ public class EmployeeServiceTest {
         newEmployeeRequest.setDepartment(newEmployee.getDepartment());
         newEmployeeRequest.setSalary(newEmployee.getSalary());
 
-        final Employee actual = newEmployee;
-        final Employee expected = employeeService.addEmployee(newEmployeeRequest);
-        boolean check = false;
+        final Employee actual = employeeService.addEmployee(newEmployeeRequest);
+        final EmployeeRequest expected = newEmployeeRequest;
 
-        if(expected.getFirstName().equals(actual.getFirstName())&&
-                expected.getLastName().equals(actual.getLastName())&&
-                expected.getDepartment()==actual.getDepartment()&&
-                expected.getSalary()==actual.getSalary()){
-            check=true;
-        }
+        assertEquals(expected.getFirstName(), actual.getFirstName());
+        assertEquals(expected.getLastName(), actual.getLastName());
+        assertEquals(expected.getDepartment(), actual.getDepartment());
+        assertEquals(expected.getSalary(), actual.getSalary());
 
-        assertTrue(check);
     }
 
     @Test
     public void checkSumSalary() {
-        int actual = actualEmployeeList.stream().mapToInt(Employee::getSalary).sum();
-        int expected = employeeService.getSumSalary();
+        int actual = employeeService.getSumSalary();
+        int expected = 370000;
         assertEquals(expected, actual);
     }
 
     @Test
     public void checkEmployeeWithMinSalary() {
-        int idEmployeeWithMinSalary = 0;
+        final Employee actual = employeeService.getEmployeeWithMinSalary();
+        EmployeeRequest expected = new EmployeeRequest();
 
-        for (Employee employee : actualEmployeeList) {
-            if (employee.getSalary() < actualEmployeeList.get(idEmployeeWithMinSalary).getSalary()) {
-                idEmployeeWithMinSalary = employee.getId();
+        int minSalary = 100000;
+        for (EmployeeRequest request : requests) {
+            if (request.getSalary() == minSalary) {
+                expected = request;
             }
         }
 
-        final Employee actual = actualEmployeeList.get(idEmployeeWithMinSalary);
-        final Employee expected = employeeService.getEmployeeWithMinSalary();
-        assertEquals(expected, actual);
+        assertEquals(expected.getFirstName(), actual.getFirstName());
+        assertEquals(expected.getLastName(), actual.getLastName());
+        assertEquals(expected.getDepartment(), actual.getDepartment());
+        assertEquals(expected.getSalary(), actual.getSalary());
+
     }
 
     @Test
-    public void getEmployeeWithMaxSalary() {
-        int idEmployeeWithMaxSalary = 0;
+    public void checkEmployeeWithMaxSalary() {
+        final Employee actual = employeeService.getEmployeeWithMaxSalary();
+        EmployeeRequest expected = new EmployeeRequest();
 
-        for (Employee employee : actualEmployeeList) {
-            if (employee.getSalary() > actualEmployeeList.get(idEmployeeWithMaxSalary).getSalary()) {
-                idEmployeeWithMaxSalary = employee.getId();
+        int maxSalary = 150000;
+        for (EmployeeRequest request : requests) {
+            if (request.getSalary() == maxSalary) {
+                expected = request;
             }
         }
 
-        final Employee actual = actualEmployeeList.get(idEmployeeWithMaxSalary);
-        final Employee expected = employeeService.getEmployeeWithMaxSalary();
-        assertEquals(expected, actual);
+        assertEquals(expected.getFirstName(), actual.getFirstName());
+        assertEquals(expected.getLastName(), actual.getLastName());
+        assertEquals(expected.getDepartment(), actual.getDepartment());
+        assertEquals(expected.getSalary(), actual.getSalary());
     }
 
     @Test
-    public void getEmployeesWithSalaryMoreAverage() {
-        Set<Employee> actual = new HashSet<>();
-        double averageSalary = actualEmployeeList.stream().mapToInt(Employee::getSalary).sum() / actualEmployeeList.size();
-
-        for (Employee employee : actualEmployeeList) {
-            if (employee.getSalary() > averageSalary) {
-                actual.add(employee);
+    public void checkEmployeeWithSalaryMoreAverage() {
+        Set<EmployeeRequest> expected = new HashSet<>();
+        double averageSalary = requests.stream().mapToInt(EmployeeRequest::getSalary).sum() / requests.size();
+        for (EmployeeRequest request : requests) {
+            if (request.getSalary() > averageSalary) {
+                expected.add(request);
             }
         }
 
-        final Set<Employee> expected = employeeService.getEmployeesWithSalaryMoreAverage();
-        assertEquals(expected, actual);
-    }
+        final Set<Employee> actual = employeeService.getEmployeesWithSalaryMoreAverage();
 
+        assertEquals(expected.size(), actual.size());
+
+        for (Employee employee : actual) {
+            EmployeeRequest newEmployee = new EmployeeRequest();
+            newEmployee.setFirstName(employee.getFirstName());
+            newEmployee.setLastName(employee.getLastName());
+            newEmployee.setDepartment(employee.getDepartment());
+            newEmployee.setSalary(employee.getSalary());
+
+            for (EmployeeRequest employeeRequest : expected) {
+                if (employeeRequest.getFirstName().equals(newEmployee.getFirstName()) && employeeRequest.getLastName().equals(newEmployee.getLastName())) {
+                    assertEquals(newEmployee.getFirstName(), employeeRequest.getFirstName());
+                    assertEquals(newEmployee.getLastName(), employeeRequest.getLastName());
+                    assertEquals(newEmployee.getDepartment(), employeeRequest.getDepartment());
+                    assertEquals(newEmployee.getSalary(), employeeRequest.getSalary());
+                }
+            }
+        }
+    }
 }
+
+
